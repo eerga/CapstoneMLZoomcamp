@@ -447,6 +447,13 @@ docker rmi real-estate-prediction
 - [AWS Account](https://mlbookcamp.com/article/aws)
 - [AWS Cli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 
+To confirm your AWS CLI is installed, check the version:
+
+```bash
+# Check aws version
+aws --version
+```
+
 ```bash
 # Download and install Fly.io CLI
 curl -L https://fly.io/install.sh | sh
