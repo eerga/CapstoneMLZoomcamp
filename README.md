@@ -17,7 +17,10 @@ Traditional approaches rely on manual labeling or simple keyword tagging, but in
 
 ## 🎯 Goal
 
-This project aims to build an accurate food image classification system using the Food-101 dataset (10 categories subset) to automatically identify different food types from photographs. By leveraging state-of-the-art deep learning models ([Xception](https://keras.io/api/applications/xception/), [MobileNet](https://keras.io/api/applications/mobilenet/), and [EfficientNetB0](https://keras.io/api/applications/efficientnet/#efficientnetb0-function)), we can provide reliable food recognition capabilities for various applications.
+This project aims to build a food image classification system using the Food-101 dataset (10 categories subset) to automatically identify different food types from photographs with Transfer Learning. Transfer Learning is a machine learning technique where a pre-trained model (trained on a large dataset, which is [ImageNet](https://www.image-net.org/) in case of the 3 models chosen for this project. As of today, ImageNet has over 14 million images in its training) is adapted for a new, related task. Instead of training a neural network from scratch, we leverage the knowledge already learned by models trained on massive datasets.
+
+
+ By leveraging state-of-the-art deep learning models ([Xception](https://keras.io/api/applications/xception/), [MobileNet](https://keras.io/api/applications/mobilenet/), and [EfficientNetB0](https://keras.io/api/applications/efficientnet/#efficientnetb0-function)), we can provide reliable food recognition capabilities for various applications.
 
 **Target Audience**:
 - **Food delivery apps** seeking automated order verification systems
@@ -287,6 +290,58 @@ The pad thai image has 512 x 512 dimensions
 It is possible to observe that some images have a much better quality compared to others. It is also possible to see that the food is not perfectly centered at the table. Moreover, there is some background "noise" present in the form of the human hand in case of the pizza picture. 
 
 ## 🤖 Model training
+
+**Pre-trained Models Foundation**: Our models (Xception, MobileNet, EfficientNetB0) were initially trained on **ImageNet** - a dataset containing 14+ million images across 1,000 categories including many food items, animals, objects, and scenes.
+
+**What the Models Already Know**:
+- **Low-level features**: Edges, shapes, colors, textures
+- **Mid-level features**: Food textures (crispy, creamy, grilled), geometric patterns
+- **High-level features**: Object recognition, spatial relationships
+
+### Our Transfer Learning Strategy
+
+```python
+# 1. Load pre-trained model (frozen weights)
+base_model = EfficientNetB0(
+    weights='imagenet',        # Pre-trained ImageNet weights
+    include_top=False,         # Remove original classification head
+    input_shape=(224, 224, 3)  # Food image input size
+)
+
+# 2. Freeze pre-trained layers (keep learned features)
+base_model.trainable = False
+
+# 3. Add custom classification head for our 10 food categories
+model = Sequential([
+    base_model,                           # Pre-trained feature extractor
+    GlobalAveragePooling2D(),            # Reduce spatial dimensions
+    Dense(100, activation='relu'),        # Custom dense layer
+    Dropout(0.2),                        # Prevent overfitting
+    Dense(10, activation='softmax')       # 10 food categories output
+])
+```
+
+### Benefits for Our Food Classification:
+
+1. **Faster Training**: No need to learn basic visual features from scratch
+2. **Better Performance**: Leverages millions of pre-learned visual patterns
+3. **Less Data Required**: Effective with our 3,000 food images vs millions needed for training from scratch
+4. **Reduced Overfitting**: Pre-trained weights provide good starting point
+
+### Two-Stage Training Process:
+
+**Stage 1: Feature Extraction**
+- Freeze pre-trained layers (base_model.trainable = False)
+- Only train the new classification head
+- Learn food-specific classification patterns
+
+**Stage 2: Fine-tuning** (Optional)
+- Unfreeze top layers of pre-trained model
+- Very slow learning rate to avoid destroying pre-learned features
+- Fine-tune features specifically for food recognition
+
+This approach allows us to achieve **91.0% accuracy** on food classification by building upon years of computer vision research encoded in pre-trained models.
+
 ![Model Comparision](readme_images/models_weights.png)
 
 **Models Evaluated**:
