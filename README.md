@@ -17,7 +17,7 @@ Traditional approaches rely on manual labeling or simple keyword tagging, but in
 
 ## 🎯 Goal
 
-This project aims to build an accurate food image classification system using the Food-101 dataset (10 categories subset) to automatically identify different food types from photographs. By leveraging state-of-the-art deep learning models (Xception, MobileNet, and EfficientNetB0), we can provide reliable food recognition capabilities for various applications.
+This project aims to build an accurate food image classification system using the Food-101 dataset (10 categories subset) to automatically identify different food types from photographs. By leveraging state-of-the-art deep learning models ([Xception](https://keras.io/api/applications/xception/), [MobileNet](https://keras.io/api/applications/mobilenet/), and [EfficientNetB0](https://keras.io/api/applications/efficientnet/#efficientnetb0-function)), we can provide reliable food recognition capabilities for various applications.
 
 **Target Audience**:
 - **Food delivery apps** seeking automated order verification systems
@@ -38,7 +38,7 @@ The ultimate goal is to build a robust image classification model that can accur
 > This project follows a systematic approach:
 > 
 > 1. **Data Preparation Phase:** ([EDA_Food.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/EDA_Food.ipynb)): Comprehensive analysis of the images, including image quality, size, and brightness. Also, selecting a smaller subset of the most popular foods that audience in the United States would choose for lunch or dinner options. The [initial dataset](https://data.vision.ee.ethz.ch/cvl/food-101.tar.gz.) has been converted to a smaller subset of 10 food categories and 300 images per food category. The split into train, validation, and test folders is 80%, 10%, and 10%. The final data can be found in [Kaggle](https://www.kaggle.com/datasets/erika7/food-101-small-10-categories-trainvaltest-split/). 
-> 2. **Modeling Phase:** Three models were trained in total for this project: Xception, MobileNet, and EfficientNetB0. Each of the model traiining and testing phases are located in the repective Jupyter Notebooks: for Xception - ([Food_Xception.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_Xception.ipynb)), for MobileNet - [Food_MobileNet.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_MobileNet.ipynb), for ElasticNetB0 - [FoodElasticNetB0.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_ElasticNetB0.ipynb). There was not a specific criteria for selecting models, more just curiousity to see how well each model performs under different circumstances. If you in the future would like to experiment with more models than what's presented here, please refer to [Keras documentation](https://keras.io/api/applications/). 
+> 2. **Modeling Phase:** Three models were trained in total for this project: Xception, MobileNet, and EfficientNetB0. Each of the model traiining and testing phases are located in the repective Jupyter Notebooks: for Xception - ([Food_Xception.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_Xception.ipynb)), for MobileNet - [Food_MobileNet.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_MobileNet.ipynb), for ElasticNetB0 - [FoodElasticNetB0.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_ElasticNetB0.ipynb). There was not a specific criteria for selecting models, more just curiousity to see how well each model performs under different circumstances. If you in the future would like to experiment with more models than what's presented here, please refer to [Keras documentation](https://keras.io/api/applications/). All of the models were able to classify the burger image as a burger, so we are going to use the lightest .onnx image. In our case, the model with the lightest image is EfficientNetB0. 
 > 4. **Final Model Training Phase:** 
 and its script equivalent - ([train.py](https://github.com/eerga/MLZoomcampHW/blob/main/midterm_prep/train.py)): Final Model Training and Saving the [Machine Learning Pipeline](https://github.com/eerga/MLZoomcampHW/blob/main/midterm_prep/model.bin) to the `.bin`
 > 5. **Pydantic Schema:** ([pydantic_schema.ipynb](https://github.com/eerga/MLZoomcampHW/blob/main/midterm_prep/pydantic_schema.ipynb)): Getting the information to formulate the Schema for Request and Response of the FastAPI application
@@ -54,7 +54,7 @@ and its script equivalent - ([train.py](https://github.com/eerga/MLZoomcampHW/bl
 > 
 > **🔍 For the Detail-Oriented:** If you're curious about the nitty-gritty details of the data cleaning and preparation process, dive into [EDA_Food.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/EDA_Food.ipynb) for a comprehensive walkthrough.
 
-## 🗄️ Dataset Overview
+### 🗄️ Dataset Overview
 
 **Dataset Source**: [Food-101 Original Dataset](https://data.vision.ee.ethz.ch/cvl/food-101.tar.gz)
 
@@ -200,7 +200,7 @@ Average size:     ~512x512 pixels
 Total size:       ~5.3 GB compressed
 ```
 
-## 📊 Dataset Challenges
+### 📊 Dataset Challenges
 
 **Visual Complexity**:
 - **Intra-class Variation**: Same food prepared differently (e.g., pizza with different toppings)
@@ -214,34 +214,124 @@ Total size:       ~5.3 GB compressed
 - **Image Quality**: Varying resolution and focus quality across images
 - **Class Imbalance**: While balanced by design, real-world applications face imbalanced data
 
-![Sample Food Categories](images/food101_sample_grid.png)
+### 📊 EDA
+![Distribution Analysis](readme_images/complete_food_categories.png)
+The distribution of the images shows a balanced dataframe, indicating that misclassification would be less likely to occur.  
+
+![Sample Food Categories](readme_images/sample_food_pictures.png)
 *Representative samples from Food-101 dataset showing diversity in food presentation and styling*
-
-## 📊 EDA
-![Distribution Analysis](images/total_price_distrib.png)
-
-Distribution of the target variable to see if the models would perform well. Since we are focusing the first-time homebuyers, we capped the price at $1.5 million dollars. 
 
 <br>
 
-![Price Analysis](images/4_tier_class.png)
+## 🧹 Subset Data
+### 🗄️ Dataset Overview
 
-Indicates the quadrant where the inventory count is high and the median price is relatively low so that there is less of competition for the house / condominium. 
+**Dataset Source**: [Food-101 Small (10 Categories)](https://www.kaggle.com/datasets/erika7/food-101-small-10-categories-trainvaltest-split/)
 
-![Correlation Matrix](images/property_value_dist.png)  
+**Dataset Structure**:
+- **Total Images**: 3,000 images (300 per category)
+- **Food Categories**: 10 popular food types
+- **Data Split**: 80% Train (240 images for each of the 10 categories) / 10% Validation (30 images for each of the 10 categories) / 10% Test (0 images for each of the 10 categories)
+- **Image Format**: RGB color images
+- **Input Size**: Varies (resized to 224x224 for model training)
 
-I tried to divide the properties by zipcode and bin the list of the zip codes into a category. However, it is possible to see that the outliers in 4 categories - `premium`, `high_end`, `mid_market`, and `budget` are way too high, making it quite hard to determine which house belongs to which category. After some time, I've realized that we should have incorporated the overall condition as well in the average prices by zipcodes statistics, but that was enough of feature engieering for the night. 
+**Target Variable**: **🍽️ Food Category** - Multi-class classification with 10 food categories
+
+**Food Categories**:
+<details>
+<summary><strong>🌍 Complete List of 10 Food Categories</strong> (Click to expand)</summary>
+1. `apple_pie` - Traditional apple dessert
+2. `burger` - Hamburger/cheeseburger
+3. `chicken_wings` - Buffalo wings and variations
+4. `fried_rice` - Asian fried rice dishes
+5. `ice_cream` - Ice cream and frozen desserts
+6. `pizza` - Pizza varieties
+7. `ramen` - Japanese noodle soup
+8. `steak` - Grilled/cooked beef steak
+9. `sushi` - Japanese sushi and rolls
+10. `tacos` - Mexican tacos and variations
+</details>
+
+**Input Features**:
+- **Image Pixels**: RGB pixel values (512x512x3 = 786,432 features before preprocessing)
+- **Spatial Information**: Position and arrangement of visual elements
+- **Color Information**: RGB color channels capturing food appearance
+- **Texture Patterns**: Surface characteristics and visual textures
+- **Shape and Structure**: Geometric features and food presentation
+
+**Data Preprocessing**:
+- **Image Resizing**: All images resized to 224×224 pixels
+- **Normalization**: Pixel values normalized to [-1,1] range
+- **Data Augmentation**: Random rotations, flips, and brightness adjustments during training
+- **Format Standardization**: All images converted to RGB format
+
+**Dataset Statistics**:
+```
+Train Set:      2,400 images (240 per category)
+Validation Set:   300 images (30 per category)  
+Test Set:         300 images (30 per category)
+```
+
+## 📊 Data Distribution
+
+![Category Distribution](images/category_distribution.png)
+*Balanced distribution across all 10 food categories*
+
+![Sample Images](images/sample_food_images.png)
+*Representative samples from each food category showing variety in presentation, lighting, and style*
+
+The pizza image has 382 x 512 dimensions
+The sushi image has 512 x 512 dimensions
+The pad thai image has 512 x 512 dimensions
+
+It is possible to observe that some images have a much better quality compared to others. It is also possible to see that the food is not perfectly centered at the table. Moreover, there is some background "noise" present in the form of the human hand in case of the pizza picture. 
 
 ## 🤖 Model training
-![Feature Imporance](images/feature_importance.png)
+![Model Comparision](readme_images/models_weights.png)
 
-Indicates that adjusted tax was the most influential predictive features for tree models. The same variables was the most influential for linear models.
+**Models Evaluated**:
+- **Xception**: Transfer learning with pre-trained ImageNet weights
+- **MobileNet**: Lightweight architecture optimized for mobile deployment  
+- **EfficientNetB0**: Balanced accuracy and efficiency
 
-![Model Comparision](images/model_comparison.png)
+**Performance Metrics**:
+```
+Model           | Val Accuracy | Val Loss | Model Size | ONNX Model Size
+----------------|--------------|----------|------------|-----------------
+Xception        | 87.7%        | 0.435    | 108.5 MB   | 91.4 MB
+MobileNet       | 85.3%        | 0.574    | 25.5 MB    | 17 MB
+EfficientNetB0  | 91.0%        | 0.305    | 18.2 MB    | 16.6 MB
+```
 
-Shows breakdown of the train RMSE and validation RMSE. The reason why they are so small is because I did a logarithmic transformation on the target value (`total_value`) because it was so much higher compared to the rest of the features. 
+### 🎯 Model Selection Criteria
 
-The way that the model was chosen is basically to where the difference between the train and validation RSME's was small enough. The most frequent was 0.002 difference, so I went with one of those models. 
+**EfficientNetB0** was selected as the final model based on:
+- **Highest Validation accuracy**: 91.0%
+- **Lowest validation loss**: 0.305
+- **Reasonable model size**: 16.6 MB (good for deployment)
+- **Stable training**: Minimal overfitting observed
+
+### 📈 Training Performance
+![Training History](readme_images/training_history.png)
+*Training and validation accuracy/loss curves showing stable convergence*
+
+### 🎯 Best Model Architecture
+![Best Model](readme_images/efficientnetb0_architecture.png)
+
+**EfficientNetB0 Configuration**:
+```python
+Base Model: EfficientNetB0 (pre-trained on ImageNet)
+Input Shape: (224, 224, 3)
+Trainable Parameters: 4,049,571
+Non-trainable Parameters: 1,000,000
+Total Parameters: 5,049,571
+
+Custom Classification Head:
+- Global Average Pooling
+- Dense(128, activation='relu')
+- Dropout(0.5)
+- Dense(10, activation='softmax')
+```
 
 Again, this project is not focused on having the absolute best model. We are doing everything we can. 
 
