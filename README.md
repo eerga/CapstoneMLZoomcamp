@@ -1,13 +1,4 @@
-# CapstoneMLZoomcamp
-
-The place where [data lives](https://www.kaggle.com/datasets/erika7/food-101-small-10-categories-trainvaltest-split/)
-
-
-Place where the chosen models can be [found](https://keras.io/api/applications/)
-
-The ones that I picked are: Xception, MobileNet, and EfficientNetB0
-
-# 🏠 Machine Learning Project Food Image Classification
+# 🍔 Machine Learning Project Food Image Classification
 
 [Capstone project](https://github.com/DataTalksClub/machine-learning-zoomcamp/tree/master/projects) for DataTalks.Club Machine Learning ZoomCamp 2025. This is a second project I am working on for this course and hope you enjoy it!
 
