@@ -178,21 +178,6 @@ and its script equivalent - ([train.py](https://github.com/eerga/MLZoomcampHW/bl
 
 </details>
 
-**Input Features (Raw Images)**:
-- **Image Pixels**: RGB pixel values (512×512×3 = 786,432 features before preprocessing)
-- **Spatial Information**: Position and arrangement of visual food elements
-- **Color Information**: RGB channels capturing food appearance, cooking level, ingredients
-- **Texture Patterns**: Surface characteristics like crispy, creamy, grilled, fried textures
-- **Shape and Structure**: Geometric features and food presentation styles
-- **Contextual Elements**: Plates, utensils, garnishes, and serving presentations
-
-**Data Preprocessing Requirements**:
-- **Image Resizing**: Standardize to 150x150 for initial training stages and to 299×299 pixels for the final model input after the best smaller model has been determined. 
-- **Normalization**: Pixel values scaled to [-1,1] range
-- **Data Augmentation**: Rotation, horizontal flip, zoom, brightness adjustments
-- **Train/Val/Test Split**: Manual splitting required (80/10/10)
-- **Format Standardization**: Convert all images to RGB format
-
 **Dataset Characteristics**:
 ```
 Total Images:     101,000 images
@@ -220,9 +205,6 @@ Total size:       ~5.3 GB compressed
 ### 📊 EDA
 ![Distribution Analysis](readme_images/complete_food_categories.png)
 The distribution of the images shows a balanced dataframe, indicating that misclassification would be less likely to occur.  
-
-![Sample Food Categories](readme_images/sample_food_pictures.png)
-*Representative samples from Food-101 dataset showing diversity in food presentation and styling*
 
 <br>
 
@@ -277,11 +259,11 @@ Test Set:         300 images (30 per category)
 
 ## 📊 Data Distribution
 
-![Category Distribution](images/category_distribution.png)
+![Category Distribution](readme_images/subset_food_breakdown.png)
 *Balanced distribution across all 10 food categories*
 
-![Sample Images](images/sample_food_images.png)
-*Representative samples from each food category showing variety in presentation, lighting, and style*
+![Sample Food Categories](readme_images/sample_food_pictures.png)
+*Representative samples from Food-101 dataset showing diversity in food presentation and styling*
 
 The pizza image has 382 x 512 dimensions
 The sushi image has 512 x 512 dimensions
