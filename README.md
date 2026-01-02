@@ -206,8 +206,6 @@ Total size:       ~5.3 GB compressed
 ![Distribution Analysis](readme_images/complete_food_categories.png)
 The distribution of the images shows a balanced dataframe, indicating that misclassification would be less likely to occur.  
 
-<br>
-
 ## 🧹 Subset Data
 ### 🗄️ Dataset Overview
 
