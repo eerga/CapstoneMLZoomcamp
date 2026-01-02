@@ -17,7 +17,7 @@ Traditional approaches rely on manual labeling or simple keyword tagging, but in
 
 ## 🎯 Goal
 
-This project aims to build a food image classification system using the Food-101 dataset (10 categories subset) to automatically identify different food types from photographs with Transfer Learning. Transfer Learning is a machine learning technique where a pre-trained model (trained on a large dataset, which is [ImageNet](https://www.image-net.org/) in case of the 3 models chosen for this project. As of today, ImageNet has over 14 million images in its training) is adapted for a new, related task. Instead of training a neural network from scratch, we leverage the knowledge already learned by models trained on massive datasets.
+This project aims to build a food image classification system using the Food-101 dataset (10 categories subset) to automatically identify different food types from photographs with **Transfer Learning**. Transfer Learning is a machine learning technique where a pre-trained model (trained on a large dataset, which is [ImageNet](https://www.image-net.org/) with a total of over 14 million images in its training) is adapted for a new, related task. Instead of training a neural network from scratch, we leverage the knowledge already learned by models trained on massive datasets.
 
 
  By leveraging state-of-the-art deep learning models ([Xception](https://keras.io/api/applications/xception/), [MobileNet](https://keras.io/api/applications/mobilenet/), and [EfficientNetB0](https://keras.io/api/applications/efficientnet/#efficientnetb0-function)), we can provide reliable food recognition capabilities for various applications.
