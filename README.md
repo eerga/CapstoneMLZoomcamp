@@ -373,13 +373,13 @@ Again, this project is not focused on having the absolute best model. We are doi
 ![Best Model](images/best_model.png)
 `ElasticNet` was the model of my selection with the listed parameters. 
 
-### 🐳 Local Docker Deployment
+## 🐳 Local Docker Deployment
 
 > [!NOTE]
 > **Video Demonstration Available**: Complete walkthrough of local Docker deployment and testing. Click [here to watch the video demonstration](youtube.com/watch?v=Uaqv5nxVsjs&feature=youtu.be) or follow the step-by-step instructions below.
 
 > [!TIP]
-> **Prerequisites**: Ensure Docker is installed and running on your machine
+> **Prerequisites**: Make sure Docker is installed and running on your machine before starting!
 
 📥 **Step 1: Get the Code**
 
@@ -387,6 +387,8 @@ Clone the repository
 ```bash
 # Clone the repository
 git clone https://github.com/eerga/CapstoneMLZoomcamp.git
+cd serverless
+```
 
 ✅ **Step 2: Verify Docker Installation**
 
@@ -409,63 +411,70 @@ docker build --no-cache -t food-classifier .
 docker run -it --rm -p 8080:8080 food-classifier
 ```
 
-🧪 Step 5: Test Your API
-🌐 Open your browser and navigate to: http://localhost:9696/docs
-📄 Click "Try it out" in the FastAPI documentation interface
-📋 Copy and paste the content from [re_property.json](https://github.com/eerga/MLZoomcampHW/blob/main/midterm_prep/re_property.json)
-▶️ Click "Execute" to get your prediction
-Expected reponse:
+**Step 5: Test Your Classifier**
 
 ```python
+python test.py
+```
+
+**Step 6: Expercted Results**:
+
+```json
 {
-  "predicted_value": 807383.14
+  "hamburger": 4.376655578613281,
+  "ice_cream": 2.499138593673706,
+  "chocolate_cake": 1.7921174764633179,
+  "fish_and_chips": 1.3778939247131348,
+  "sushi": 0.44076675176620483,
+  "tacos": -0.2998351454734802,
+  "chicken_curry": -1.2163896560668945,
+  "pizza": -1.6933295726776123,
+  "pad_thai": -2.341885566711426,
+  "ramen": -3.0775370597839355
 }
 ```
 
-**Option B: Automated Testing Script**
-
-```python 
-cd MLZoomcampHW/midterm_prep
-python marketing.py
-```
-🧹 **Step 6: Clean Up**
-
-```sh
-# Optional: Remove the image to free up space
-docker rmi food-classifier
-```
-
->[!WARNING] Port Conflicts: If port 9696 is already in use, try: docker run -it --rm -p 9697:9696 real-estate-prediction and access via http://localhost:9697
 
 ### ☁️ AWS Serverless deployment
 
 > [!NOTE]
 > **Video Proof Available**: This deployment was successfully completed and documented. No need to run these commands yourself! Click on the [video proof](https://www.youtube.com/watch?v=-sTecFyrV18) to see the deployment video.
 
-🚀 **Step 1: Install AWS CLI**
+🚀 **Step 1: AWS Prerequisites**
+<table>
+<tr>
+<td width="50%">
 
-- [AWS Account](https://mlbookcamp.com/article/aws)
-- [AWS Cli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+**🔧 Required Setup**
+- ☁️ [Create AWS Account](https://mlbookcamp.com/article/aws)
+- 💻 [Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+- 🔑 Configure AWS credentials
 
-To confirm your AWS CLI is installed, check the version:
+</td>
+<td width="50%">
 
+**✅ Quick Verification**
 ```bash
-# Check aws version
+# Verify AWS CLI installation
 aws --version
+
+# Check your configuration and geographic location
+aws configure list
 ```
 
+</td>
+</tr>
+</table>
+
+**Step 2: Required IAM Permissions**
 To be able to run the code, the created user needs to have following permissions:
-- mazonEC2ContainerRegistryPowerUser
-- AWSLambdaRole
-- IAMUserChangePassword
-- AmazonEC2ContainerRegistryFullAccess
+```
+✅  AWSLambdaRole
+✅  IAMUserChangePassword
+✅  AmazonEC2ContainerRegistryFullAccess
+```
 
-We also need to store an image of our model in ECR
-
-UI Approach:
-Search "ECR" in the console and click on it
-Click on "Create Repository"
-aws configure list
+**Step 3: Create ECR Repository**
 
 ```bash
 aws ecr create-repository \
@@ -473,57 +482,89 @@ aws ecr create-repository \
   --region "us-east-1"
 ```
 
-Navigate to this link:
+> [!SUCCESS]
+> 🎉 **Repository Created!** Navigate to your ECR Console, https://us-east-1.console.aws.amazon.com/ecr/private-registry/repositories, to see your new repository.
 
-https://us-east-1.console.aws.amazon.com/ecr/private-registry/repositories
+**🔗 Step 4: Get Your Repository URI**
+Copy your repository URI from the AWS Console. It should look like:
 
-and copy the link of the repository:
+```
+542892327487.dkr.ecr.us-east-1.amazonaws.com/food-classification-lambda
+```
+> [!NOTE]
+> 🌍 **Region Note**: Your URI will differ based on your AWS region!
 
-Format looks like this:
-[account_number].dkr.ecr.[geographic_zone].amazonaws.com/food-classification-lambda
-
-Use this URL in the publish.sh script
-
-You can use a sample bash script for reference: [sample_publish.sh](sample_publish.sh)
-
-and the execute 
+**Step 5: Build & Push Container**
 
 ```bash
 bash publish.sh
 ```
 
+> [!SUCCESS]
+> ✨ **Container Pushed!** Your food classifier is now stored in AWS ECR.
+
+> [!NOTE]
+> 🌍 **Region Note**: Your URI will differ based on your AWS region!
+
 The final output should look like this
 ![ECR Push Success](readme_images/bash_publish_execution.png)
-*Successful Docker image push to Amazon ECR*
 
-Now let's create a Lambda function using the container image approach
+**🔧Step 6: Create Lambda Function**
 
-Search for Lambda
-Click Create Function
-Select Container Image
+1. **Navigate to**: https://us-east-1.console.aws.amazon.com/lambda/
+2. **Click**: `Create Function`
+3. **Select**: `Container Image`
+4. **Function Settings**:
+   ```
+   Function name: food-classification-lambda
+   Container image: [Select your ECR image]
+   Architecture: x86_64
+   ```
 
-Also browse an image to select the ECR that was just created
-For some reason, the image that is tagged with "v1" does not work for me, so I just choose an untagged image of the same size as v1
-Click "Create function"
+> [!TIP]
+> 🔍 **Image Selection**: If the "v1" tagged image doesn't work, select the untagged image of the same size.
 
+**Step 7: Configure Function Settings**
 
+<table>
+<tr>
+<td width="50%">
 
-🎯 **Step 6: Test Your Deployment**
-Navigate to the Test Tab
-Enter url for Event name
+**⚙️ Timeout Configuration**
+- Navigate to `Configuration` → `General`
+- Set timeout to: **1 minute 0 seconds**
+- Memory: **1024 MB** (recommended)
 
-Insert this for Event Json
-```python
+</td>
+<td width="50%">
+
+**🔧 Environment Variables**
+```
+MODEL_NAME = food_classifier_efficientnet_v6.onnx
+```
+
+</td>
+</tr>
+</table>
+
+**Click**: `Create Function`
+
+🧪  **Step 6: Test Your Deployment**
+1. **Navigate to**: `Test` tab
+2. **Event name**: `url`
+3. **Event JSON**:
+```json
 {
     "url": "https://raw.githubusercontent.com/eerga/CapstoneMLZoomcamp/main/readme_images/test_burger.jpg"
 }
 ```
-Click Save
-Go to Configuration to Allocate more resources
-For Timeout, select 1 min and 0 sec
-Click Test
+5. **Click** Save
 
-5. 🎉 Expected Response:
+🚀 **Step 9: Run the Test**
+
+**Click** `Test`
+
+**🎉 Expected Response:**
 ```python
 {
   "hamburger": 4.376655578613281,
@@ -541,13 +582,25 @@ Click Test
 
 ![Expected Output](readme_images/expected_output_aws.png)
 
-🧪 **Step 7: Test with Custom Script**
-```python
-# Update marketing.py with your deployment URL
-python marketing.py
+🧹 **Step 10: Clean Up (Optional)**
+
+When you're done experimenting:
+
+<details>
+<summary><strong>💸 Cost Management - Click to expand cleanup steps</strong></summary>
+
+```bash
+# Delete Lambda function
+aws lambda delete-function --function-name food-classification-lambda
+
+# Delete ECR repository
+aws ecr delete-repository \
+  --repository-name food-classification-lambda \
+  --force \
+  --region us-east-1
 ```
 
-🧹 **Step 8: Clean Up (Optional)**
+> [!WARNING]
+> ⚠️ **Permanent Action**: This will permanently delete your deployment.
 
-Delete ECR Repo
-Delete Lambda function
+</details>
