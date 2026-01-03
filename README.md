@@ -808,6 +808,12 @@ MODEL_NAME = food_classifier_efficientnet_v6.onnx
 
 ![Expected Output](readme_images/expected_output_aws.png)
 
+Alternatively, you can test locally against the deployed instance:
+
+```python 
+python invoke.py
+```
+
 🧹 **Step 11: Clean Up (Optional)**
 
 When you're done experimenting:
