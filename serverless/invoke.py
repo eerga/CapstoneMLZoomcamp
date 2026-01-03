@@ -4,11 +4,11 @@ import json
 lambda_client = boto3.client('lambda')
 
 url = {
-  "url": "https://github.com/eerga/CapstoneMLZoomcamp/blob/main/readme_images/test_burger.jpg"
+  "url": "https://raw.githubusercontent.com/eerga/CapstoneMLZoomcamp/main/readme_images/test_burger.jpg"
 }
 
 response = lambda_client.invoke(
-    FunctionName='food-classification-docker',
+    FunctionName='food-classification-lambda',
     InvocationType='RequestResponse',
     Payload=json.dumps(url)
 )
