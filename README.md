@@ -260,6 +260,9 @@ Test Set:         300 images (30 per category)
 ![Category Distribution](readme_images/subset_food_breakdown.png)
 *Balanced distribution across all 10 food categories*
 
+![Category Distribution](readme_images/subset_distribution2.png)
+*Balanced distribution across all 10 food categories*
+
 ![Sample Food Categories](readme_images/sample_food_pictures.png)
 *Representative samples from Food-101 dataset showing diversity in food presentation and styling*
 
