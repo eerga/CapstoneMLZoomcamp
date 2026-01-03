@@ -706,7 +706,6 @@ The final output should look like this
 **⚙️ Timeout Configuration**
 - Navigate to `Configuration` → `General`
 - Set timeout to: **1 minute 0 seconds**
-- Memory: **1024 MB** (recommended)
 
 </td>
 <td width="50%">
