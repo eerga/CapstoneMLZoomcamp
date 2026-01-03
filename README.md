@@ -42,14 +42,14 @@ The ultimate goal is to build a robust image classification model that can accur
 > 
 > 1. **Data Preparation Phase:** ([EDA_Food.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/EDA_Food.ipynb)): Comprehensive analysis of the images, including image quality, size, and brightness, and rotation. The [initial dataset](https://data.vision.ee.ethz.ch/cvl/food-101.tar.gz.) has been converted to a smaller subset of the most popular foods that audience in the United States would choose for lunch or dinner options and consists of 10 food categories and 300 images per food category. The split into train, validation, and test folders is 80%, 10%, and 10%. The final data can be found in [Kaggle](https://www.kaggle.com/datasets/erika7/food-101-small-10-categories-trainvaltest-split/). The data is publically available. 
 > 2. **Modeling Phase:** Three models were trained in total for this project: Xception, MobileNet, and EfficientNetB0. Each of the model training and testing phases are located in the respective Jupyter Notebooks (created with Google Colab): for Xception - ([Food_Xception.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_Xception.ipynb)), for MobileNet - [Food_MobileNet.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_MobileNet.ipynb), for ElasticNetB0 - [FoodElasticNetB0.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_ElasticNetB0.ipynb). There was not a specific criteria for selecting models, more just curiousity to see how well each model performs under different circumstances. If you in the future would like to experiment with more models than what's presented here, please refer to [Keras documentation](https://keras.io/api/applications/). All of the models were able to classify the burger image as a burger, so we are going to use the lightest .onnx image. In our case, the model with the lightest image is EfficientNetB0. Advice for the future - use [Kaggle notebooks](https://www.kaggle.com/code) instead of Google Colab to not run into GPU resources limitations. 
-> 4. **Final Model Training Phase:** 
-and its script equivalent - ([train.py](https://github.com/eerga/MLZoomcampHW/blob/main/midterm_prep/train.py)): Final Model Training and Saving the [Machine Learning Pipeline](https://github.com/eerga/MLZoomcampHW/blob/main/midterm_prep/model.bin) to the `.bin`
-> 5. **Pydantic Schema:** ([pydantic_schema.ipynb](https://github.com/eerga/MLZoomcampHW/blob/main/midterm_prep/pydantic_schema.ipynb)): Getting the information to formulate the Schema for Request and Response of the FastAPI application
-> 6. **Prediction Model Phase:** ([predict.ipynb](https://github.com/eerga/MLZoomcampHW/blob/main/midterm_prep/predict.ipynb)) and its script equivalent - ([predict.py](https://github.com/eerga/MLZoomcampHW/blob/main/midterm_prep/predict.py)): Loading the model and Serving it via a web service
-> 7. **Dependency Files:** [pyproject.toml](https://github.com/eerga/MLZoomcampHW/blob/main/midterm_prep/pyproject.toml)
-> 8. **Packaging the Code:** [Dockerfile](https://github.com/eerga/MLZoomcampHW/blob/main/midterm_prep/Dockerfile) for running the service
-> 9. **Local Docker Deployment**: See [🐳 Local Docker Deployment](#-local-docker-deployment) section below for local testing instructions
-> 10. **Deployment**: See [☁️ Cloud Deployment](#️-cloud-deployment) section with [video demonstration](https://www.youtube.com/watch?v=-sTecFyrV18)
+> 3. **Final Model Training Phase:** 
+There is no `train.py` or `train.ipynb` because the models built require GPU, so running a `train.py` just for the final model will be a pain, not to mention dependency nightmare. Instead, the final compressed model is hosted in [HuggingFace](https://huggingface.co/erikyshkin/food-classification-model/resolve/main/food_classifier_efficientnet_v6.onnx) and the model is used directly in the Dockerfile, so there is no need to download it. More details can be found in [🤖 Model Training](#-model-training). 
+> 4. **Prediction Model Phase:** There is no `predict.ipynb` or `predict.py` code. Instead, the serverless prediction logic is handled by [`lambda_function.py`](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/serverless/lambda_function.py) - the core AWS Lambda handler that processeses image URLs and returns food classification predictions. For local testing, there's a [`test.py`](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/serverless/test.py) script that sends HTTP requests to your Docker container.
+> 5. **Publishing Image to ECR** To publish a Docker image to AWS ECR, [`publish.sh`](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/serverless/publish.sh) file is available. 
+> 6. **Dependency Files:** [pyproject.toml](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/serverless/pyproject.toml)
+> 7. **Packaging the Code:** [Dockerfile](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/serverless/Dockerfile) for running the service
+> 8. **Local Docker Deployment**: See [🐳 Local Docker Deployment](#-local-docker-deployment) section below for local testing instructions
+> 9. **Deployment**: See [☁️ AWS Serverless deployment](#️-aws-serverless-deployment) section with [video demonstration](https://www.youtube.com/watch?v=-sTecFyrV18)
 > 
 > Only the most relevant features that align with our problem statement will be selected for the final modeling process.
 > 
@@ -57,7 +57,7 @@ and its script equivalent - ([train.py](https://github.com/eerga/MLZoomcampHW/bl
 > 
 > **🔍 For the Detail-Oriented:** If you're curious about the nitty-gritty details of the data cleaning and preparation process, dive into [EDA_Food.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/EDA_Food.ipynb) for a comprehensive walkthrough.
 
-### 🗄️ Dataset Overview
+### 🗄️ Initial Dataset Overview
 
 **Dataset Source**: [Food-101 Original Dataset](https://data.vision.ee.ethz.ch/cvl/food-101.tar.gz)
 
@@ -178,17 +178,17 @@ and its script equivalent - ([train.py](https://github.com/eerga/MLZoomcampHW/bl
 
 </details>
 
-**Dataset Characteristics**:
+**Initial Dataset Characteristics**:
 ```
 Total Images:     101,000 images
 Categories:       101 food types
 Images per class: 1,000 images
 File Format:      .jpg (RGB)
 Average size:     ~512x512 pixels
-Total size:       ~5.3 GB compressed
+Total size:       ~154 MB compressed
 ```
 
-### 📊 Dataset Challenges
+### 📊 Initial Dataset Challenges
 
 **Visual Complexity**:
 - **Intra-class Variation**: Same food prepared differently (e.g., pizza with different toppings)
@@ -196,7 +196,7 @@ Total size:       ~5.3 GB compressed
 - **Presentation Variety**: Restaurant vs. homemade vs. street food presentations
 - **Cultural Variations**: Same dish prepared in different cultural styles
 
-**Technical Challenges**:
+**Initial Technical Challenges**:
 - **Lighting Conditions**: Professional food photography vs. casual snapshots
 - **Background Noise**: Different plates, tables, and serving environments
 - **Image Quality**: Varying resolution and focus quality across images
@@ -207,7 +207,7 @@ Total size:       ~5.3 GB compressed
 The distribution of the images shows a balanced dataframe, indicating that misclassification would be less likely to occur.  
 
 ## 🧹 Subset Data
-### 🗄️ Dataset Overview
+### 🗄️ Subset Dataset Overview
 
 **Dataset Source**: [Food-101 Small (10 Categories)](https://www.kaggle.com/datasets/erika7/food-101-small-10-categories-trainvaltest-split/)
 
@@ -216,7 +216,7 @@ The distribution of the images shows a balanced dataframe, indicating that miscl
 - **Food Categories**: 10 popular food types
 - **Data Split**: 80% Train (240 images for each of the 10 categories) / 10% Validation (30 images for each of the 10 categories) / 10% Test (0 images for each of the 10 categories)
 - **Image Format**: RGB color images
-- **Input Size**: Varies (resized to 224x224 for model training)
+- **Input Size**: Varies (resized to 299x299 for model training)
 
 **Target Variable**: **🍽️ Food Category** - Multi-class classification with 10 food categories
 
@@ -236,16 +236,16 @@ The distribution of the images shows a balanced dataframe, indicating that miscl
 </details>
 
 **Input Features**:
-- **Image Pixels**: RGB pixel values (512x512x3 = 786,432 features before preprocessing)
+- **Image Pixels**: RGB pixel values (512x512x3 = 786,432 features before preprocessing and 299x299x3 = 268,203 features after preprocessing)
 - **Spatial Information**: Position and arrangement of visual elements
 - **Color Information**: RGB color channels capturing food appearance
 - **Texture Patterns**: Surface characteristics and visual textures
 - **Shape and Structure**: Geometric features and food presentation
 
 **Data Preprocessing**:
-- **Image Resizing**: All images resized to 224×224 pixels
-- **Normalization**: Pixel values normalized to [-1,1] range
-- **Data Augmentation**: Random rotations, flips, and brightness adjustments during training
+- **Image Resizing**: All images resized to 299×299 pixels
+- **Normalization**: Pixel values normalized by using `tensorflow.keras.applications.[model_name] import preprocess_input`
+- **Data Augmentation**: Horizontal flips, zoom range, and shear adjustments during training
 - **Format Standardization**: All images converted to RGB format
 
 **Dataset Statistics**:
@@ -255,7 +255,7 @@ Validation Set:   300 images (30 per category)
 Test Set:         300 images (30 per category)
 ```
 
-## 📊 Data Distribution
+## 📊 Subset Data Distribution
 
 ![Category Distribution](readme_images/subset_food_breakdown.png)
 *Balanced distribution across all 10 food categories*
@@ -263,9 +263,9 @@ Test Set:         300 images (30 per category)
 ![Sample Food Categories](readme_images/sample_food_pictures.png)
 *Representative samples from Food-101 dataset showing diversity in food presentation and styling*
 
-The pizza image has 382 x 512 dimensions
-The sushi image has 512 x 512 dimensions
-The pad thai image has 512 x 512 dimensions
+- The pizza image has 382 x 512 dimensions
+- The sushi image has 512 x 512 dimensions
+- The pad thai image has 512 x 512 dimensions
 
 It is possible to observe that some images have a much better quality compared to others. It is also possible to see that the food is not perfectly centered at the table. Moreover, there is some background "noise" present in the form of the human hand in case of the pizza picture. 
 
@@ -285,20 +285,75 @@ It is possible to observe that some images have a much better quality compared t
 base_model = EfficientNetB0(
     weights='imagenet',        # Pre-trained ImageNet weights
     include_top=False,         # Remove original classification head
-    input_shape=(224, 224, 3)  # Food image input size
+    input_shape=(299, 299, 3)  # Food image input size
 )
 
 # 2. Freeze pre-trained layers (keep learned features)
 base_model.trainable = False
 
-# 3. Add custom classification head for our 10 food categories
-model = Sequential([
-    base_model,                           # Pre-trained feature extractor
-    GlobalAveragePooling2D(),            # Reduce spatial dimensions
-    Dense(100, activation='relu'),        # Custom dense layer
-    Dropout(0.2),                        # Prevent overfitting
-    Dense(10, activation='softmax')       # 10 food categories output
-])
+# 3. Build custom classification head using Functional API
+def make_model_more_layers_and_drop_large(input_size=299, learning_rate=0.001, size_inner=100, droprate=0.2):
+    base_model = EfficientNetB0(
+        weights='imagenet',
+        include_top=False,
+        input_shape=(input_size, input_size, 3)
+    )
+    base_model.trainable = False
+
+    # Create custom architecture with Functional API
+    inputs = keras.Input(shape=(input_size, input_size, 3))
+    base = base_model(inputs, training=False)          # Pre-trained feature extractor
+    vectors = keras.layers.GlobalAveragePooling2D()(base)  # Reduce spatial dimensions
+    
+    inner = keras.layers.Dense(size_inner, activation='relu')(vectors)  # Custom dense layer
+    drop = keras.layers.Dropout(droprate)(inner)                        # Prevent overfitting
+    outputs = keras.layers.Dense(10)(drop)                              # 10 food categories (logits)
+
+    model = keras.Model(inputs, outputs)
+
+    # Configure training
+    optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
+    loss = keras.losses.CategoricalCrossentropy(from_logits=True)  # Note: from_logits=True
+    
+    model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy'])
+    return model
+
+# 4. Train and validation data transformation
+train_gen = ImageDataGenerator(
+    preprocessing_function=preprocess_input,
+    shear_range=10,
+    zoom_range=0.1,
+    horizontal_flip=True
+    )
+train_ds = train_gen.flow_from_directory(
+    './food-101/train',
+      target_size=(299,299),
+      batch_size=32
+      )
+
+val_gen = ImageDataGenerator(preprocessing_function=preprocess_input)
+val_ds = val_gen.flow_from_directory(
+    './food-101/validation',
+      target_size=(299,299),
+      batch_size=32,
+      shuffle=False
+      )
+
+# 5. Checkpointing to save the best model
+checkpoint = keras.callbacks.ModelCheckpoint(
+    'efficientnet_v6{epoch:02d}_{val_accuracy:.3f}.h5',
+    save_best_only=True,
+    monitor='val_accuracy',
+    mode='max' # maximize accuracy
+    )      
+# 6. Final model configuration
+learning_rate = 0.0005
+size = 100
+droprate = 0.2
+input_size=299
+
+model = make_model_more_layers_and_drop_large(input_size=299, learning_rate=learning_rate, size_inner=size, droprate=droprate)
+history = model.fit(train_ds, epochs=50, validation_data=val_ds, callbacks=[checkpoint])
 ```
 
 ### Benefits for Our Food Classification:
@@ -315,10 +370,14 @@ model = Sequential([
 - Only train the new classification head
 - Learn food-specific classification patterns
 
-**Stage 2: Fine-tuning** (Optional)
-- Unfreeze top layers of pre-trained model
-- Very slow learning rate to avoid destroying pre-learned features
-- Fine-tune features specifically for food recognition
+**Stage 2: Hyperparameter Optimization** 
+- The initial image size is 150x150x3 instead of 299x299x3 for faster learning.
+- Adjusting learning rate. Chosen learning rates were `[0.0001, 0.001, 0.01, 0.1]`.
+- Adjusting inner dense layer size. Chosen inner dense  layers were 
+`[10, 100, 1000]`.
+- Adjusting droprates. Chosen droprates were `[0.0, 0.2, 0.5, 0.8]`.
+- Data augmentation. The simplest one that was chosen was `vertical_flip`. It did not perform well on smaller images.
+- For the final model, data augmentations used were `shear_range`, `zoom_range`, and `horizontal_flip`, which performed much better on a larger image sizes. 
 
 This approach allows us to achieve **91.0% accuracy** on food classification by building upon years of computer vision research encoded in pre-trained models.
 
@@ -346,32 +405,27 @@ EfficientNetB0  | 91.0%        | 0.305    | 18.2 MB    | 16.6 MB
 - **Reasonable model size**: 16.6 MB (good for deployment)
 - **Stable training**: Minimal overfitting observed
 
-### 📈 Training Performance
-![Training History](readme_images/training_history.png)
-*Training and validation accuracy/loss curves showing stable convergence*
-
 ### 🎯 Best Model Architecture
-![Best Model](readme_images/efficientnetb0_architecture.png)
 
 **EfficientNetB0 Configuration**:
 ```python
 Base Model: EfficientNetB0 (pre-trained on ImageNet)
-Input Shape: (224, 224, 3)
-Trainable Parameters: 4,049,571
-Non-trainable Parameters: 1,000,000
-Total Parameters: 5,049,571
+Input Shape: (299, 299, 3)
+Trainable Parameters: 4,178,681
+Non-trainable Parameters: 0
+Total Parameters: 4,178,681
 
 Custom Classification Head:
 - Global Average Pooling
-- Dense(128, activation='relu')
-- Dropout(0.5)
-- Dense(10, activation='softmax')
+- Dense(100, activation='relu')
+- Dropout(0.2)
+- Dense(10)
 ```
 
-Again, this project is not focused on having the absolute best model. We are doing everything we can. 
+More details about parameters can be observed here:
+![Parameters](readme_images/parameter_breakdown.png)
 
-![Best Model](images/best_model.png)
-`ElasticNet` was the model of my selection with the listed parameters. 
+Again, this project is not focused on having the absolute best model. We are simply trying to learn.
 
 ## 🤗 Model Hosting & Access
 > [!SUCCESS]
@@ -543,7 +597,7 @@ python test.py
 ```
 
 
-### ☁️ AWS Serverless deployment
+## ☁️ AWS Serverless deployment
 
 > [!NOTE]
 > **Video Proof Available**: This deployment was successfully completed and documented. No need to run these commands yourself! Click on the [video proof](https://www.youtube.com/watch?v=-sTecFyrV18) to see the deployment video.
