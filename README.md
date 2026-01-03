@@ -524,7 +524,7 @@ docker run -it --rm -p 8080:8080 food-classifier
 python test.py
 ```
 
-**Step 6: Expercted Results**:
+**Step 6: Expected Results**:
 
 ```json
 {
@@ -573,7 +573,72 @@ aws configure list
 </tr>
 </table>
 
-**Step 2: Required IAM Permissions**
+👤 **Step 2: Create IAM User & Configure Access**
+> [!IMPORTANT]
+> **🔒 Security Best Practice**: Create a dedicated user for this project instead of using root credentials.
+
+**🎯 Create New User:**
+
+1. **Navigate to IAM** → https://us-east-1.console.aws.amazon.com/iam/home?region=us-east-1#/users
+2. **Click** `Create User`
+
+**👤 User Configuration:**
+
+<table>
+<tr>
+<td width="50%">
+
+**📝 User Details**
+- **User name**: `test-account`
+- ✅ **Enable console access**: Checked
+- **Password type**: `Custom Password`
+- **Enter secure password**: (save this!)
+
+</td>
+<td width="50%">
+
+**🔑 Access Settings**
+- ✅ **Users must create password at next sign-in**: Unchecked
+- **Click**: `Next`
+- **Skip permissions** for now
+- **Click**: `Create User`
+
+</td>
+</tr>
+</table>
+
+**🔐 Attach Required Permissions:**
+
+1. **Return to users list** → **Click on your new user**
+2. **Click** `Add permissions` → `Add permissions` (yes, twice!)
+3. **Select** `Attach policies directly`
+
+**Add these 3 essential policies:**
+
+| 🛡️ Policy Name | 📝 Purpose |
+|----------------|-----------|
+| **AWSLambdaRole** | Lambda function management |
+| **AmazonEC2ContainerRegistryFullAccess** | ECR repository access |
+| **IAMUserChangePassword** | Password management |
+
+
+For each policy:
+- **Search** for policy name → **Select checkbox** → **Click** `Next` → **Click** `Add permissions` 
+
+**🔑 Create Access Keys:**
+
+1. **In user details page** → **Click** `Create access key`
+2. **Select** `Command Line Interface (CLI)`
+3. ✅ **Check**: `I understand the above recommendation and want to proceed to create an access key`
+4. **Click** `Next`
+5. **Description**: `Food Classification Project CLI Access`
+6. **Click** `Create Access key`
+> [!WARNING]
+> **💾 Save Credentials Now**: Download the `.csv` file or copy the Access Key ID and Secret Access Key. You won't see the secret again!
+
+7. **Click** `Done`
+
+**Step 3: Required IAM Permissions**
 To be able to run the code, the created user needs to have following permissions:
 ```
 ✅  AWSLambdaRole
@@ -581,7 +646,7 @@ To be able to run the code, the created user needs to have following permissions
 ✅  AmazonEC2ContainerRegistryFullAccess
 ```
 
-**Step 3: Create ECR Repository**
+**Step 4: Create ECR Repository**
 
 ```bash
 aws ecr create-repository \
@@ -592,7 +657,7 @@ aws ecr create-repository \
 > [!SUCCESS]
 > 🎉 **Repository Created!** Navigate to your ECR Console, https://us-east-1.console.aws.amazon.com/ecr/private-registry/repositories, to see your new repository.
 
-**🔗 Step 4: Get Your Repository URI**
+**🔗 Step 5: Get Your Repository URI**
 Copy your repository URI from the AWS Console. It should look like:
 
 ```
@@ -601,7 +666,7 @@ Copy your repository URI from the AWS Console. It should look like:
 > [!NOTE]
 > 🌍 **Region Note**: Your URI will differ based on your AWS region!
 
-**Step 5: Build & Push Container**
+**Step 6: Build & Push Container**
 
 ```bash
 bash publish.sh
@@ -616,7 +681,7 @@ bash publish.sh
 The final output should look like this
 ![ECR Push Success](readme_images/bash_publish_execution.png)
 
-**🔧Step 6: Create Lambda Function**
+**🔧Step 7: Create Lambda Function**
 
 1. **Navigate to**: https://us-east-1.console.aws.amazon.com/lambda/
 2. **Click**: `Create Function`
@@ -631,7 +696,7 @@ The final output should look like this
 > [!TIP]
 > 🔍 **Image Selection**: If the "v1" tagged image doesn't work, select the untagged image of the same size.
 
-**Step 7: Configure Function Settings**
+**Step 8: Configure Function Settings**
 
 <table>
 <tr>
@@ -656,7 +721,7 @@ MODEL_NAME = food_classifier_efficientnet_v6.onnx
 
 **Click**: `Create Function`
 
-🧪  **Step 6: Test Your Deployment**
+🧪  **Step 9: Test Your Deployment**
 1. **Navigate to**: `Test` tab
 2. **Event name**: `url`
 3. **Event JSON**:
@@ -667,7 +732,7 @@ MODEL_NAME = food_classifier_efficientnet_v6.onnx
 ```
 5. **Click** Save
 
-🚀 **Step 9: Run the Test**
+🚀 **Step 10: Run the Test**
 
 **Click** `Test`
 
@@ -689,7 +754,7 @@ MODEL_NAME = food_classifier_efficientnet_v6.onnx
 
 ![Expected Output](readme_images/expected_output_aws.png)
 
-🧹 **Step 10: Clean Up (Optional)**
+🧹 **Step 11: Clean Up (Optional)**
 
 When you're done experimenting:
 
