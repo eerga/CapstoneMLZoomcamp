@@ -44,12 +44,12 @@ The ultimate goal is to build a robust image classification model that can accur
 > 2. **Modeling Phase:** Three models were trained in total for this project: Xception, MobileNet, and EfficientNetB0. Each of the model training and testing phases are located in the respective Jupyter Notebooks (created with Google Colab): for Xception - ([Food_Xception.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_Xception.ipynb)), for MobileNet - [Food_MobileNet.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_MobileNet.ipynb), for ElasticNetB0 - [FoodElasticNetB0.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_ElasticNetB0.ipynb). There was not a specific criteria for selecting models, more just curiousity to see how well each model performs under different circumstances. If you in the future would like to experiment with more models than what's presented here, please refer to [Keras documentation](https://keras.io/api/applications/). All of the models were able to classify the burger image as a burger, so we are going to use the lightest .onnx image. In our case, the model with the lightest image is EfficientNetB0. Advice for the future - use [Kaggle notebooks](https://www.kaggle.com/code) instead of Google Colab to not run into GPU resources limitations. 
 > 3. **Final Model Training Phase:** 
 There is no `train.py` or `train.ipynb` because the models built require GPU, so running a `train.py` just for the final model will be a pain, not to mention dependency nightmare. Instead, the final compressed model is hosted in [HuggingFace](https://huggingface.co/erikyshkin/food-classification-model/resolve/main/food_classifier_efficientnet_v6.onnx) and the model is used directly in the Dockerfile, so there is no need to download it. More details can be found in [🤖 Model Training](#-model-training). 
-> 4. **Prediction Model Phase:** There is no `predict.ipynb` or `predict.py` code. Instead, the serverless prediction logic is handled by [`lambda_function.py`](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/serverless/lambda_function.py) - the core AWS Lambda handler that processeses image URLs and returns food classification predictions. For local testing, there's a [`test.py`](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/serverless/test.py) script that sends HTTP requests to your Docker container.
+> 4. **Prediction Model Phase:** There is no `predict.ipynb` or `predict.py` code. Instead, the serverless prediction logic is handled by [`lambda_function.py`](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/serverless/lambda_function.py) - the core AWS Lambda handler that processeses image URLs and returns food classification predictions. For local testing, there's a [`test.py`](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/serverless/test.py) script that sends HTTP requests to your Docker container. For cloud testing, there is an [`invoke.py`](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/serverless/invoke.py) that tests the actual AWS Lambda deployment.
 > 5. **Publishing Image to ECR** To publish a Docker image to AWS ECR, [`publish.sh`](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/serverless/publish.sh) file is available. 
 > 6. **Dependency Files:** [pyproject.toml](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/serverless/pyproject.toml)
 > 7. **Packaging the Code:** [Dockerfile](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/serverless/Dockerfile) for running the service
 > 8. **Local Docker Deployment**: See [🐳 Local Docker Deployment](#-local-docker-deployment) section below for local testing instructions
-> 9. **Deployment**: See [☁️ AWS Serverless deployment](#️-aws-serverless-deployment) section with [video demonstration](https://www.youtube.com/watch?v=-sTecFyrV18)
+> 9. **Deployment**: See [☁️ AWS Serverless deployment](#️-aws-serverless-deployment) section with [video demonstration](https://www.youtube.com/watch?v=YJyjDrlDtSI)
 > 
 > Only the most relevant features that align with our problem statement will be selected for the final modeling process.
 > 
@@ -539,7 +539,7 @@ RUN curl -L -o food_classifier_efficientnet_v6.onnx \
 ## 🐳 Local Docker Deployment
 
 > [!NOTE]
-> **Video Demonstration Available**: Complete walkthrough of local Docker deployment and testing. Click [here to watch the video demonstration](youtube.com/watch?v=Uaqv5nxVsjs&feature=youtu.be) or follow the step-by-step instructions below.
+> **Video Demonstration Available**: Complete walkthrough of local Docker deployment and testing. Click [here to watch the video demonstration](https://www.youtube.com/watch?v=VkPCtYRCJ4k) or follow the step-by-step instructions below.
 
 > [!TIP]
 > **Prerequisites**: Make sure Docker is installed and running on your machine before starting!
@@ -602,7 +602,7 @@ python test.py
 ## ☁️ AWS Serverless deployment
 
 > [!NOTE]
-> **Video Proof Available**: This deployment was successfully completed and documented. No need to run these commands yourself! Click on the [video proof](https://www.youtube.com/watch?v=-sTecFyrV18) to see the deployment video.
+> **Video Proof Available**: This deployment was successfully completed and documented. No need to run these commands yourself! Click on the [video proof](https://www.youtube.com/watch?v=YJyjDrlDtSI) to see the deployment video.
 
 🚀 **Step 1: AWS Prerequisites**
 <table>
@@ -704,11 +704,6 @@ To be able to run the code, the created user needs to have following permissions
 ```
 
 **Step 4: Create ECR Repository**
-
-```bash
-# Navigate to the working directory
-cd serverless
-```
 
 ```bash
 aws ecr create-repository \
@@ -817,8 +812,7 @@ MODEL_NAME = food_classifier_efficientnet_v6.onnx
 
 Alternatively, you can test locally against the deployed instance:
 
-```bash
-cd serverless
+```python 
 python invoke.py
 ```
 
