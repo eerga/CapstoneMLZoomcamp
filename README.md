@@ -518,9 +518,10 @@ docker build --no-cache -t food-classifier .
 docker run -it --rm -p 8080:8080 food-classifier
 ```
 
-**Step 5: Test Your Classifier**
+**Step 5: Test Your Classifier in a Separate Directory**
 
 ```python
+cd serverless
 python test.py
 ```
 
