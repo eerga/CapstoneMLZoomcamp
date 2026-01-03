@@ -373,6 +373,113 @@ Again, this project is not focused on having the absolute best model. We are doi
 ![Best Model](images/best_model.png)
 `ElasticNet` was the model of my selection with the listed parameters. 
 
+## 🤗 Model Hosting & Access
+> [!SUCCESS]
+> **🎉 Model Successfully Deployed!** Our trained EfficientNetB0 food classifier is now publicly available on Hugging Face Hub for easy access and deployment.
+
+---
+
+<table>
+<tr>
+<td width="50%">
+
+**🔗 Direct Links**
+- 🌐 **Model Page**: [erikyshkin/food-classification-model](https://huggingface.co/erikyshkin/food-classification-model)
+- 📁 **Direct Download**: [food_classifier_efficientnet_v6.onnx](https://huggingface.co/erikyshkin/food-classification-model/resolve/main/food_classifier_efficientnet_v6.onnx)
+- 📊 **Git Download**: 
+```git
+git clone https://huggingface.co/erikyshkin/food-classification-model
+```
+
+</td>
+<td width="50%">
+
+**📈 Model Stats**
+```
+Model Type:     EfficientNetB0
+Format:         ONNX (optimized)
+File Size:      16.6 MB
+Accuracy:       91.0%
+Categories:     10 food types
+```
+
+</td>
+</tr>
+</table>
+
+🔐 **Step 1: Create Your Hugging Face Account**
+
+1. **🌟 Sign up** at [huggingface.co](https://huggingface.co) (completely free!)
+2. **📧 Confirm your email** address
+3. **🔑 Create access token** at [Settings → Tokens](https://huggingface.co/settings/tokens)
+   - Choose **"Fine-grained"** token type with **Write access to contents/settings of all repos under your personal namespace** access for uploading models
+   - Copy and save your token securely
+
+> [!TIP]
+> 💡 **Pro Tip**: Hugging Face is completely free for public models and offers unlimited storage for open-source projects!
+
+**Step 2: Upload Your Own Model (Optional)**
+
+```bash
+# Install Hugging Face CLI
+pip install huggingface_hub
+
+# Login with your token
+huggingface-cli login
+# Paste your token when prompted
+
+# Create new model repository
+huggingface-cli repo create food-classification-model --type model
+
+# Upload your model file
+huggingface-cli upload food-classification-model food_classifier_efficientnet_v6.onnx
+```
+
+### 🎯 Model Usage Options
+
+#### **Option 1: Direct Download** 🔽
+```bash
+# Download model directly
+wget https://huggingface.co/erikyshkin/food-classification-model/resolve/main/food_classifier_efficientnet_v6.onnx
+```
+
+#### **Option 2: Git Clone** 📂
+```bash
+# Clone entire repository
+git clone https://huggingface.co/erikyshkin/food-classification-model
+```
+
+#### **Option 3: Python Integration** 🐍
+```python
+from huggingface_hub import hf_hub_download
+
+# Download model programmatically
+model_path = hf_hub_download(
+    repo_id="erikyshkin/food-classification-model",
+    filename="food_classifier_efficientnet_v6.onnx"
+)
+```
+
+#### **Option 4: Docker Integration** 🐳
+```dockerfile
+# Automatically download in Dockerfile
+RUN curl -L -o food_classifier_efficientnet_v6.onnx \
+    "https://huggingface.co/erikyshkin/food-classification-model/resolve/main/food_classifier_efficientnet_v6.onnx"
+```
+
+### 🔄 Automatic Integration
+
+> [!NOTE]
+> **🚀 Seamless Deployment**: This model is automatically integrated into our Docker containers! 
+> 
+> When you run either:
+> - 🐳 **Local Docker**: Uses model file from your local directory
+> - ☁️ **Cloud Deployment**: Downloads model from Hugging Face during build
+> 
+> **No manual model management required!** 
+
+---
+
 ## 🐳 Local Docker Deployment
 
 > [!NOTE]
