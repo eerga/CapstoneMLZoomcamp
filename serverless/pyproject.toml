@@ -1,0 +1,10 @@
+[project]
+name = "serverless"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "keras-image-helper==0.0.2",
+    "onnxruntime==1.23.2",
+]
