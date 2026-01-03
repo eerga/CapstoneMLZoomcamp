@@ -400,13 +400,13 @@ docker run hello-world
 🔨 **Step 3: Build the Docker Image**
 ```sh
 # Build the prediction API image
-docker build --no-cache -t real-estate-prediction .
+docker build --no-cache -t food-classifier .
 ```
 
 🚀 **Step 4: Run the Container**
 ```sh
 # Start the API server
-docker run -it --rm -p 9696:9696 real-estate-prediction
+docker run -it --rm -p 8080:8080 food-classifier
 ```
 
 🧪 Step 5: Test Your API
@@ -432,7 +432,7 @@ python marketing.py
 
 ```sh
 # Optional: Remove the image to free up space
-docker rmi real-estate-prediction
+docker rmi food-classifier
 ```
 
 >[!WARNING] Port Conflicts: If port 9696 is already in use, try: docker run -it --rm -p 9697:9696 real-estate-prediction and access via http://localhost:9697
@@ -454,64 +454,93 @@ To confirm your AWS CLI is installed, check the version:
 aws --version
 ```
 
+To be able to run the code, the created user needs to have following permissions:
+- mazonEC2ContainerRegistryPowerUser
+- AWSLambdaRole
+- IAMUserChangePassword
+- AmazonEC2ContainerRegistryFullAccess
+
+We also need to store an image of our model in ECR
+
+UI Approach:
+Search "ECR" in the console and click on it
+Click on "Create Repository"
+aws configure list
+
 ```bash
-# Download and install Fly.io CLI
-curl -L https://fly.io/install.sh | sh
+aws ecr create-repository \
+  --repository-name "food-classification-lambda" \
+  --region "us-east-1"
 ```
 
-⚙️ **Step 2: Edit shell configuration (works for Mac)**
+Navigate to this link:
 
-Open the bash shell
-```sh
-nano ~/.zshrc
-```
-Export environment variables 
-```sh
-export FLYCTL_INSTALL="{directory}/.fly"
-export PATH="$FLYCTL_INSTALL/bin:$PATH"
-```
-Reload the shell to update its status:
+https://us-east-1.console.aws.amazon.com/ecr/private-registry/repositories
 
-```sh
-`source ~/.zshrc
-```
-✅ **Step 3: Verify Installation**
-```sh
-which fly
+and copy the link of the repository:
+
+Format looks like this:
+[account_number].dkr.ecr.[geographic_zone].amazonaws.com/food-classification-lambda
+
+Use this URL in the publish.sh script
+
+You can use a sample bash script for reference: [sample_publish.sh](sample_publish.sh)
+
+and the execute 
+
+```bash
+bash publish.sh
 ```
 
-🔐 **Step 4: Authentication & Setup**
-```sh
-# Sign up and authenticate with Fly.io
-fly auth signup
-```
+The final output should look like this
+![ECR Push Success](readme_images/bash_publish_execution.png)
+*Successful Docker image push to Amazon ECR*
 
-```sh
-# Launch your app with auto-generated name
-fly launch --generate-name
-```
+Now let's create a Lambda function using the container image approach
 
->[!TIP] 
-> **Interactive Setup Questions**:
-> ❌ N - No, I don't want to tweak the settings
-> ✅ Y - Yes, create a Dockerfile
+Search for Lambda
+Click Create Function
+Select Container Image
 
-🚀 **Step 5: Deploy Your Application**
-Check that Docker ignore was created
+Also browse an image to select the ECR that was just created
+For some reason, the image that is tagged with "v1" does not work for me, so I just choose an untagged image of the same size as v1
+Click "Create function"
 
-```fly deploy```
+
 
 🎯 **Step 6: Test Your Deployment**
-1. 📋 Get your deployment URL from the fly deploy output
-2. 🌐 Navigate to [your-app-url]/docs
-3. 🧪 Click "Try it out" in the FastAPI documentation
-4. 📄 Copy-paste your re_property.json test data
+Navigate to the Test Tab
+Enter url for Event name
+
+Insert this for Event Json
+```python
+{
+    "url": "https://raw.githubusercontent.com/eerga/CapstoneMLZoomcamp/main/readme_images/test_burger.jpg"
+}
+```
+Click Save
+Go to Configuration to Allocate more resources
+For Timeout, select 1 min and 0 sec
+Click Test
+
 5. 🎉 Expected Response:
 ```python
 {
-  "predicted_value": 807383.14
+  "hamburger": 4.376655578613281,
+  "ice_cream": 2.499138593673706,
+  "chocolate_cake": 1.7921174764633179,
+  "fish_and_chips": 1.3778939247131348,
+  "sushi": 0.44076675176620483,
+  "tacos": -0.2998351454734802,
+  "chicken_curry": -1.2163896560668945,
+  "pizza": -1.6933295726776123,
+  "pad_thai": -2.341885566711426,
+  "ramen": -3.0775370597839355
 }
 ```
+
+![Expected Output](readme_images/expected_output_aws.png)
+
 🧪 **Step 7: Test with Custom Script**
 ```python
 # Update marketing.py with your deployment URL
@@ -520,12 +549,5 @@ python marketing.py
 
 🧹 **Step 8: Clean Up (Optional)**
 
-```sh
-# List all your fly apps
-fly apps list
-```
-
-Destroy the app
-```sh
-fly apps destroy <app-name>
-```
+Delete ECR Repo
+Delete Lambda function

@@ -4,7 +4,7 @@ import json
 lambda_client = boto3.client('lambda')
 
 url = {
-  "url": "https://imgur.com/a/Q1KiHkT"
+  "url": "https://github.com/eerga/CapstoneMLZoomcamp/blob/main/readme_images/test_burger.jpg"
 }
 
 response = lambda_client.invoke(
