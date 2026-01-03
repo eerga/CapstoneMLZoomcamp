@@ -706,6 +706,11 @@ To be able to run the code, the created user needs to have following permissions
 **Step 4: Create ECR Repository**
 
 ```bash
+# Navigate to the working directory
+cd serverless
+```
+
+```bash
 aws ecr create-repository \
   --repository-name "food-classification-lambda" \
   --region "us-east-1"
@@ -812,7 +817,8 @@ MODEL_NAME = food_classifier_efficientnet_v6.onnx
 
 Alternatively, you can test locally against the deployed instance:
 
-```python 
+```bash
+cd serverless
 python invoke.py
 ```
 
