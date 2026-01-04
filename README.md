@@ -246,7 +246,7 @@ The distribution of the images shows a balanced dataframe, indicating that miscl
 - **Shape and Structure**: Geometric features and food presentation
 
 **Data Preprocessing**:
-- **Image Resizing**: All images resized to 299×299 pixels
+- **Image Resizing**: All images resized to `299×299` pixels
 - **Normalization**: Pixel values normalized by using `tensorflow.keras.applications.[model_name] import preprocess_input`
 - **Data Augmentation**: Horizontal flips, zoom range, and shear adjustments during training
 - **Format Standardization**: All images converted to RGB format
@@ -406,7 +406,8 @@ EfficientNetB0  | 91.0%        | 86.0%         | 0.305    | 0.476     | 18.2 MB 
 - **Highest Validation accuracy**: 91.0%
 - **Lowest validation loss**: 0.305
 - **Reasonable model size**: 16.6 MB (good for deployment)
-- **Stable training**: Minimal overfitting observed
+
+If I am being completely transparent, a more robust model is `Xception`. However, since all of the models were able to accurately classify the burger image as a burger, I chose the lightest one, which is `EfficientNetB0`
 
 ### 🎯 Best Model Architecture
 
@@ -721,7 +722,7 @@ Copy your repository URI from the AWS Console. It should look like:
 ```
 542892327487.dkr.ecr.us-east-1.amazonaws.com/food-classification-lambda
 ```
-> [!NOTE]
+> [!WARNING]
 > 🌍 **Region Note**: Your URI will differ based on your AWS region!
 
 **Step 6: Build & Push Container**
@@ -733,7 +734,7 @@ bash publish.sh
 > [!NOTE]
 > ✨ **Container Pushed!** Your food classifier is now stored in AWS ECR.
 
-> [!NOTE]
+> [!WARNING]
 > 🌍 **Region Note**: Your URI will differ based on your AWS region!
 
 The final output should look like this
