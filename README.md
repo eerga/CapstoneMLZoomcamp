@@ -67,7 +67,7 @@ There is no `train.py` or `train.ipynb` because the models built require GPU, so
 - **Food Categories**: 101 different food types from around the world
 - **Data Split**: No predefined split (requires manual splitting)
 - **Image Format**: RGB color images (.jpg)
-- **Input Size**: Varies (typically 512x512)
+- **Input Size**: Varies (typically `512x512`)
 
 **Target Variable**: **🍽️ Food Category** - Multi-class classification with 101 food categories
 
@@ -185,7 +185,7 @@ Total Images:     101,000 images
 Categories:       101 food types
 Images per class: 1,000 images
 File Format:      .jpg (RGB)
-Average size:     ~512x512 pixels
+Average size:     ~`512x512` pixels
 Total size:       ~154 MB compressed
 ```
 
@@ -217,7 +217,7 @@ The distribution of the images shows a balanced dataframe, indicating that miscl
 - **Food Categories**: 10 popular food types
 - **Data Split**: 80% Train (240 images for each of the 10 categories) / 10% Validation (30 images for each of the 10 categories) / 10% Test (0 images for each of the 10 categories)
 - **Image Format**: RGB color images
-- **Input Size**: Varies (resized to 299x299 for model training)
+- **Input Size**: Varies (resized to `299x299` for model training)
 
 **Target Variable**: **🍽️ Food Category** - Multi-class classification with 10 food categories
 
@@ -239,7 +239,7 @@ The distribution of the images shows a balanced dataframe, indicating that miscl
 </details>
 
 **Input Features**:
-- **Image Pixels**: RGB pixel values (512x512x3 = 786,432 features before preprocessing and 299x299x3 = 268,203 features after preprocessing)
+- **Image Pixels**: RGB pixel values (`512x512x3` = `786,432` features before preprocessing and `299x299x3` = `268,203` features after preprocessing)
 - **Spatial Information**: Position and arrangement of visual elements
 - **Color Information**: RGB color channels capturing food appearance
 - **Texture Patterns**: Surface characteristics and visual textures
@@ -259,24 +259,22 @@ Test Set:         300 images (30 per category)
 ```
 
 ## 📊 Subset Data Distribution
-
-![Category Distribution](readme_images/subset_food_breakdown.png)
 *Balanced distribution across all 10 food categories*
-
 ![Category Distribution](readme_images/subset_distribution2.png)
 
-![Sample Food Categories](readme_images/sample_food_pictures.png)
 *Representative samples from Food-101 dataset showing diversity in food presentation and styling*
+![Sample Food Categories](readme_images/sample_food_pictures.png)
 
-- The pizza image has 382 x 512 dimensions
-- The sushi image has 512 x 512 dimensions
-- The pad thai image has 512 x 512 dimensions
+
+- The pizza image has `382 x 512` dimensions
+- The sushi image has `512 x 512` dimensions
+- The pad thai image has `512 x 512` dimensions
 
 It is possible to observe that some images have a much better quality compared to others. It is also possible to see that the food is not perfectly centered at the table. Moreover, there is some background "noise" present in the form of the human hand in case of the pizza picture. 
 
 ## 🤖 Model training
 
-**Pre-trained Models Foundation**: Our models (Xception, MobileNet, EfficientNetB0) were initially trained on **ImageNet** - a dataset containing 14+ million images across 1,000 categories including many food items, animals, objects, and scenes.
+**Pre-trained Models Foundation**: Our models (`Xception`, `MobileNet`, `EfficientNetB0`) were initially trained on **ImageNet** - a dataset containing 14+ million images across 1,000 categories including many food items, animals, objects, and scenes.
 
 **What the Models Already Know**:
 - **Low-level features**: Edges, shapes, colors, textures
@@ -371,12 +369,12 @@ history = model.fit(train_ds, epochs=50, validation_data=val_ds, callbacks=[chec
 ### Two-Stage Training Process:
 
 **Stage 1: Feature Extraction**
-- Freeze pre-trained layers (base_model.trainable = False)
+- Freeze pre-trained layers (`base_model.trainable = False`)
 - Only train the new classification head
 - Learn food-specific classification patterns
 
 **Stage 2: Hyperparameter Optimization** 
-- The initial image size is 150x150x3 instead of 299x299x3 for faster learning.
+- The initial image size is `150x150x3` instead of `299x299x3` for faster learning.
 - Adjusting learning rate. Chosen learning rates were `[0.0001, 0.001, 0.01, 0.1]`.
 - Adjusting inner dense layer size. Chosen inner dense  layers were 
 `[10, 100, 1000]`.
@@ -394,12 +392,13 @@ This approach allows us to achieve **91.0% accuracy** on food classification by 
 - **EfficientNetB0**: Balanced accuracy and efficiency
 
 **Performance Metrics**:
+**Performance Metrics**:
 ```
-Model           | Val Accuracy | Test Accuracy | Val Loss | Model Size | ONNX Model Size
-----------------|--------------|---------------|----------|------------|-----------------
-Xception        | 87.7%        | 91.0%         | 0.435    | 108.5 MB   | 91.4 MB
-MobileNet       | 85.3%        | 87.0%         | 0.574    | 25.5 MB    | 17 MB
-EfficientNetB0  | 91.0%        | 86.0%         | 0.305    | 18.2 MB    | 16.6 MB
+Model           | Val Accuracy | Test Accuracy | Val Loss | Test Loss | Model Size | ONNX Model Size
+----------------|--------------|---------------|----------|-----------|------------|-----------------
+Xception        | 87.7%        | 91.0%         | 0.435    | 0.366     | 108.5 MB   | 91.4 MB
+MobileNet       | 85.3%        | 87.0%         | 0.574    | 0.490     | 25.5 MB    | 17 MB
+EfficientNetB0  | 91.0%        | 86.0%         | 0.305    | 0.476     | 18.2 MB    | 16.6 MB
 ```
 ### 🎯 Model Selection Criteria
 
