@@ -41,7 +41,11 @@ The ultimate goal is to build a robust image classification model that can accur
 > This project follows a systematic approach:
 > 
 > 1. **Data Preparation Phase:** ([EDA_Food.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/EDA_Food.ipynb)): Comprehensive analysis of the images, including image quality, size, and brightness, and rotation. The [initial dataset](https://data.vision.ee.ethz.ch/cvl/food-101.tar.gz.) has been converted to a smaller subset of the most popular foods that audience in the United States would choose for lunch or dinner options and consists of 10 food categories and 300 images per food category. The split into train, validation, and test folders is 80%, 10%, and 10%. The final data can be found in [Kaggle](https://www.kaggle.com/datasets/erika7/food-101-small-10-categories-trainvaltest-split/). The data is publically available. 
-> 2. **Modeling Phase:** Three models were trained in total for this project: Xception, MobileNet, and EfficientNetB0. Each of the model training and testing phases are located in the respective Jupyter Notebooks (created with Google Colab): for Xception - ([Food_Xception.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_Xception.ipynb)), for MobileNet - [Food_MobileNet.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_MobileNet.ipynb), for ElasticNetB0 - [FoodElasticNetB0.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_ElasticNetB0.ipynb). There was not a specific criteria for selecting models, more just curiousity to see how well each model performs under different circumstances. If you in the future would like to experiment with more models than what's presented here, please refer to [Keras documentation](https://keras.io/api/applications/). All of the models were able to classify the burger image as a burger, so we are going to use the lightest .onnx image. In our case, the model with the lightest image is EfficientNetB0. Advice for the future - use [Kaggle notebooks](https://www.kaggle.com/code) instead of Google Colab to not run into GPU resources limitations. 
+> 2. **Modeling Phase:** Three models were trained in total for this project: Xception, MobileNet, and EfficientNetB0. Each of the model training and testing phases are located in the respective Jupyter Notebooks (created with Google Colab): for Xception - ([Food_Xception.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_Xception.ipynb)), for MobileNet - [Food_MobileNet.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_MobileNet.ipynb), for ElasticNetB0 - [FoodElasticNetB0.ipynb](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/Food_ElasticNetB0.ipynb). There was not a specific criteria for selecting models, more just curiousity to see how well each model performs under different circumstances. If you in the future would like to experiment with more models than what's presented here, please refer to [Keras documentation](https://keras.io/api/applications/). All of the models were able to classify the burger image as a burger. The final model - EfficientNetB0 - is the lightest of the 3 models and it also yielded the highest validation accuracy. For further explanation about the models, please refer to the [🤖 Model Training](#-model-training) section. 
+
+> [!TIP]
+> 💡 **Pro Tip for Future Projects**: Use [Kaggle Notebooks](https://www.kaggle.com/code) instead of Google Colab to avoid GPU resource limitations. Kaggle provides more generous GPU quotas and better computational resources for machine learning projects.
+
 > 3. **Final Model Training Phase:** 
 There is no `train.py` or `train.ipynb` because the models built require GPU, so running a `train.py` just for the final model will be a pain, not to mention dependency nightmare. Instead, the final compressed model is hosted in [HuggingFace](https://huggingface.co/erikyshkin/food-classification-model/resolve/main/food_classifier_efficientnet_v6.onnx) and the model is used directly in the Dockerfile, so there is no need to download it. More details can be found in [🤖 Model Training](#-model-training). 
 > 4. **Prediction Model Phase:** There is no `predict.ipynb` or `predict.py` code. Instead, the serverless prediction logic is handled by [`lambda_function.py`](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/serverless/lambda_function.py) - the core AWS Lambda handler that processeses image URLs and returns food classification predictions. For local testing, there's a [`test.py`](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/serverless/test.py) script that sends HTTP requests to your Docker container. For cloud testing, there is an [`invoke.py`](https://github.com/eerga/CapstoneMLZoomcamp/blob/main/serverless/invoke.py) that tests the actual AWS Lambda deployment.
@@ -223,16 +227,18 @@ The distribution of the images shows a balanced dataframe, indicating that miscl
 **Food Categories**:
 <details>
 <summary><strong>🌍 Complete List of 10 Food Categories</strong> (Click to expand)</summary>
-1. `apple_pie` - Traditional apple dessert
-2. `burger` - Hamburger/cheeseburger
-3. `chicken_wings` - Buffalo wings and variations
-4. `fried_rice` - Asian fried rice dishes
+
+1. `chicken_curry` - Spiced chicken dish
+2. `chocolate_cake` - Rich chocolate dessert
+3. `fish_and_chips` - British fried fish
+4. `hamburger` - Ground beef sandwich
 5. `ice_cream` - Ice cream and frozen desserts
-6. `pizza` - Pizza varieties
-7. `ramen` - Japanese noodle soup
-8. `steak` - Grilled/cooked beef steak
+6. `pad_thai` - Thai stir-fried noodles
+7. `pizza` - Pizza varieties
+8. `ramen` - Japanese noodle soup
 9. `sushi` - Japanese sushi and rolls
 10. `tacos` - Mexican tacos and variations
+
 </details>
 
 **Input Features**:
@@ -392,13 +398,12 @@ This approach allows us to achieve **91.0% accuracy** on food classification by 
 
 **Performance Metrics**:
 ```
-Model           | Val Accuracy | Val Loss | Model Size | ONNX Model Size
-----------------|--------------|----------|------------|-----------------
-Xception        | 87.7%        | 0.435    | 108.5 MB   | 91.4 MB
-MobileNet       | 85.3%        | 0.574    | 25.5 MB    | 17 MB
-EfficientNetB0  | 91.0%        | 0.305    | 18.2 MB    | 16.6 MB
+Model           | Val Accuracy | Test Accuracy | Val Loss | Model Size | ONNX Model Size
+----------------|--------------|---------------|----------|------------|-----------------
+Xception        | 87.7%        | 91.0%         | 0.435    | 108.5 MB   | 91.4 MB
+MobileNet       | 85.3%        | 87.0%         | 0.574    | 25.5 MB    | 17 MB
+EfficientNetB0  | 91.0%        | 86.0%         | 0.305    | 18.2 MB    | 16.6 MB
 ```
-
 ### 🎯 Model Selection Criteria
 
 **EfficientNetB0** was selected as the final model based on:
@@ -430,7 +435,7 @@ More details about parameters can be observed here:
 Again, this project is not focused on having the absolute best model. We are simply trying to learn.
 
 ## 🤗 Model Hosting & Access
-> [!SUCCESS]
+> [!NOTE]
 > **🎉 Model Successfully Deployed!** Our trained EfficientNetB0 food classifier is now publicly available on Hugging Face Hub for easy access and deployment.
 
 ---
@@ -711,7 +716,7 @@ aws ecr create-repository \
   --region "us-east-1"
 ```
 
-> [!SUCCESS]
+> [!NOTE]
 > 🎉 **Repository Created!** Navigate to your ECR Console, https://us-east-1.console.aws.amazon.com/ecr/private-registry/repositories, to see your new repository.
 
 **🔗 Step 5: Get Your Repository URI**
@@ -729,7 +734,7 @@ Copy your repository URI from the AWS Console. It should look like:
 bash publish.sh
 ```
 
-> [!SUCCESS]
+> [!NOTE]
 > ✨ **Container Pushed!** Your food classifier is now stored in AWS ECR.
 
 > [!NOTE]
