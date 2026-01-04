@@ -407,7 +407,7 @@ EfficientNetB0  | 91.0%        | 86.0%         | 0.305    | 0.476     | 18.2 MB 
 - **Lowest validation loss**: 0.305
 - **Reasonable model size**: 16.6 MB (good for deployment)
 
-If I am being completely transparent, a more robust model is `Xception`. However, since all of the models were able to accurately classify the burger image as a burger, I chose the lightest one, which is `EfficientNetB0`
+If I am being completely transparent, a more robust model is `Xception`. However, since all of the models were able to accurately classify the burger image as a burger, I chose the lightest one, which is `EfficientNetB0`. If in your line of business you need a more robust model, `Xception` is the way to go!
 
 ### 🎯 Best Model Architecture
 
